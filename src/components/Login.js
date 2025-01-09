@@ -13,10 +13,19 @@ const Login = () => {
     e.preventDefault();
     try {
       const response = await api.post("login/", { email, password });
-      localStorage.setItem("token", response.data.access); // Guarda el token en localStorage
+      const { access, role } = response.data;
+      localStorage.setItem("token", access);
+      localStorage.setItem("role", role);
       alert("Inicio de sesión exitoso");
       setError("");
-      navigate("/dashboard"); // Redirige a otra página después del inicio de sesión
+      console.log("ROL", role);
+      console.log("Token", access);
+      // Redirige basado en el rol
+      if (role === "admin") {
+        navigate("/admin"); // Página de administración
+      } else {
+        navigate("/dashboard"); // Página de usuario normal
+      }
     } catch (err) {
       setError("Usuario o contraseña incorrectos");
     }

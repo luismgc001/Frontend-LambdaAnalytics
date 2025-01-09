@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import api from "../api/api";
 import EditUserForm from "./EditUserForm";
+import "../styles/AdminDashboard.css";
 
 const AdminDashboard = () => {
   const [users, setUsers] = useState([]);
@@ -12,13 +13,18 @@ const AdminDashboard = () => {
     const fetchUsers = async () => {
       try {
         const token = localStorage.getItem("token");
+        console.log("Token enviado:", token);
+
         const response = await api.get("users/", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
+
+        console.log("Respuesta del backend:", response.data);
         setUsers(response.data);
       } catch (err) {
+        console.error("Error del backend:", err.response);
         setError("No tienes permiso para ver esta información.");
       }
     };
