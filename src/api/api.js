@@ -1,11 +1,10 @@
-import axios from 'axios';
+import axios from "axios";
 
-// Configura Axios con la URL base de tu backend
 const api = axios.create({
-    baseURL: 'http://127.0.0.1:8000/api/', // Cambia esta URL según tu configuración
-    headers: {
-        'Content-Type': 'application/json',
-    },
+  baseURL: "http://127.0.0.1:8000/api/", // Cambia la URL según tu backend
+  headers: {
+    "Content-Type": "application/json",
+  },
 });
 
 export default api;
