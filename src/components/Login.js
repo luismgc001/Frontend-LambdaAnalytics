@@ -1,32 +1,49 @@
-import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom"; // Para navegación
-import api from "../api/api"; // Importa la instancia de Axios
-import "../styles/Login.css"; // Importa los estilos
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import api from "../api/api";
+import "../styles/Login.css";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const navigate = useNavigate(); // Para redirigir
+  const navigate = useNavigate();
+
+  // Redirigir si ya está autenticado
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    const role = localStorage.getItem("role");
+
+    if (token && role) {
+      // Redirige basado en el rol
+      if (role === "admin") {
+        navigate("/admin", { replace: true });
+      } else {
+        navigate("/dashboard", { replace: true });
+      }
+    }
+  }, [navigate]); // Solo se ejecuta al montar el componente
 
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
+      // Realiza la solicitud al endpoint de login
       const response = await api.post("login/", { email, password });
       const { access, role } = response.data;
+
+      // Almacena el token y el rol en localStorage
       localStorage.setItem("token", access);
       localStorage.setItem("role", role);
-      alert("Inicio de sesión exitoso");
+
+      // Limpia errores y redirige basado en el rol
       setError("");
-      console.log("ROL", role);
-      console.log("Token", access);
-      // Redirige basado en el rol
       if (role === "admin") {
-        navigate("/admin"); // Página de administración
+        navigate("/admin", { replace: true }); // Redirige a la página de administrador
       } else {
-        navigate("/dashboard"); // Página de usuario normal
+        navigate("/dashboard", { replace: true }); // Redirige a la página de usuario normal
       }
     } catch (err) {
+      // Maneja errores de login
       setError("Usuario o contraseña incorrectos");
     }
   };

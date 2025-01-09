@@ -1,31 +1,78 @@
 import React from "react";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
 import Login from "./components/Login";
 import Register from "./components/Register";
-import AdminDashboard from "./components/AdminDashboard";
-import ProtectedRoute from "./components/ProtectedRoute";
 import Dashboard from "./components/Dashboard";
+import AdminDashboard from "./components/AdminDashboard";
 
 const App = () => {
+  // Verifica si el usuario está autenticado
+  const isAuthenticated = () => !!localStorage.getItem("token");
+
+  // Obtiene el rol del usuario
+  const getRole = () => localStorage.getItem("role");
+
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+        {/* Ruta pública para Login */}
+        <Route
+          path="/"
+          element={
+            isAuthenticated() ? (
+              getRole() === "admin" ? (
+                <Navigate to="/admin" />
+              ) : (
+                <Navigate to="/dashboard" />
+              )
+            ) : (
+              <Login />
+            )
+          }
+        />
+
+        {/* Ruta pública para Registro */}
+        <Route
+          path="/register"
+          element={
+            isAuthenticated() ? (
+              getRole() === "admin" ? (
+                <Navigate to="/admin" />
+              ) : (
+                <Navigate to="/dashboard" />
+              )
+            ) : (
+              <Register />
+            )
+          }
+        />
+
+        {/* Ruta protegida para el Dashboard */}
         <Route
           path="/dashboard"
           element={
-            <ProtectedRoute>
+            isAuthenticated() && getRole() === "user" ? (
               <Dashboard />
-            </ProtectedRoute>
+            ) : (
+              <Navigate to="/" />
+            )
           }
         />
+
+        {/* Ruta protegida para el AdminDashboard */}
         <Route
           path="/admin"
           element={
-            <ProtectedRoute role="admin">
+            isAuthenticated() && getRole() === "admin" ? (
               <AdminDashboard />
-            </ProtectedRoute>
+            ) : (
+              <Navigate to="/" />
+            )
           }
         />
       </Routes>

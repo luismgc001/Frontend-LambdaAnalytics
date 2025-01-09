@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import api from "../api/api";
 import EditUserForm from "./EditUserForm";
 import "../styles/AdminDashboard.css";
@@ -6,31 +7,47 @@ import "../styles/AdminDashboard.css";
 const AdminDashboard = () => {
   const [users, setUsers] = useState([]);
   const [editingUser, setEditingUser] = useState(null);
+  const [authenticatedUser, setAuthenticatedUser] = useState(null);
   const [error, setError] = useState("");
 
-  // Cargar la lista de usuarios
+  const navigate = useNavigate();
+
   useEffect(() => {
     const fetchUsers = async () => {
       try {
         const token = localStorage.getItem("token");
-        console.log("Token enviado:", token);
 
-        const response = await api.get("users/", {
+        if (!token) {
+          navigate("/", { replace: true });
+          return;
+        }
+
+        const authResponse = await api.get("me/", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
 
-        console.log("Respuesta del backend:", response.data);
-        setUsers(response.data);
+        setAuthenticatedUser(authResponse.data);
+
+        const usersResponse = await api.get("users/", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        setUsers(usersResponse.data);
       } catch (err) {
-        console.error("Error del backend:", err.response);
-        setError("No tienes permiso para ver esta información.");
+        if (err.response && err.response.status === 401) {
+          navigate("/", { replace: true });
+        } else {
+          setError("No tienes permiso para ver esta información.");
+        }
       }
     };
 
     fetchUsers();
-  }, []);
+  }, [navigate]);
 
   // Función para desactivar un usuario
   const deactivateUser = async (userId) => {
@@ -48,9 +65,21 @@ const AdminDashboard = () => {
     }
   };
 
+  // Función para cerrar sesión
+  const handleLogout = () => {
+    localStorage.removeItem("token"); // Elimina el token
+    localStorage.removeItem("role"); // Opcional: Elimina también el rol
+    navigate("/"); // Redirige al login
+  };
+
   return (
     <div className="admin-dashboard">
-      <h1>Administración de Usuarios</h1>
+      <div className="dashboard-header">
+        <h1>Administración de Usuarios</h1>
+        <button className="logout-button" onClick={handleLogout}>
+          Cerrar Sesión
+        </button>
+      </div>
       {error && <p className="error">{error}</p>}
       {editingUser ? (
         <EditUserForm
@@ -66,7 +95,7 @@ const AdminDashboard = () => {
           }}
         />
       ) : (
-        <>
+        <div className="table-container">
           <table>
             <thead>
               <tr>
@@ -87,16 +116,32 @@ const AdminDashboard = () => {
                   <td>{user.last_name}</td>
                   <td>{user.role}</td>
                   <td>
-                    <button onClick={() => setEditingUser(user)}>Editar</button>
-                    <button onClick={() => deactivateUser(user.id)}>
-                      Desactivar
-                    </button>
+                    <div className="actions">
+                      <button
+                        className="edit"
+                        onClick={() => setEditingUser(user)}
+                        disabled={
+                          authenticatedUser && authenticatedUser.id === user.id
+                        } // Deshabilitar si es el usuario autenticado
+                      >
+                        Editar
+                      </button>
+                      <button
+                        className="deactivate"
+                        onClick={() => deactivateUser(user.id)}
+                        disabled={
+                          authenticatedUser && authenticatedUser.id === user.id
+                        } // Deshabilitar si es el usuario autenticado
+                      >
+                        Desactivar
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
-        </>
+        </div>
       )}
     </div>
   );

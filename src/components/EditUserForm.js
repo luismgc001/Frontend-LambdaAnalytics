@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import api from "../api/api";
+import "../styles/EditUserForm.css";
 
 const EditUserForm = ({ user, onClose, onUserUpdated }) => {
   const [formData, setFormData] = useState({
