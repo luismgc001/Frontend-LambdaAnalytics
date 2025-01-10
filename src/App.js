@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   BrowserRouter as Router,
   Routes,
@@ -11,11 +11,19 @@ import Dashboard from "./components/Dashboard";
 import AdminDashboard from "./components/AdminDashboard";
 
 const App = () => {
-  // Verifica si el usuario está autenticado
-  const isAuthenticated = () => !!localStorage.getItem("token");
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [role, setRole] = useState(null);
 
-  // Obtiene el rol del usuario
-  const role = localStorage.getItem("role");
+  // Verifica autenticación al cargar la aplicación
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    const userRole = localStorage.getItem("role");
+
+    if (token) {
+      setIsAuthenticated(true);
+      setRole(userRole);
+    }
+  }, []);
 
   return (
     <Router>
@@ -24,7 +32,7 @@ const App = () => {
         <Route
           path="/"
           element={
-            isAuthenticated() ? (
+            isAuthenticated ? (
               role === "admin" ? (
                 <Navigate to="/admin" />
               ) : (
@@ -40,7 +48,7 @@ const App = () => {
         <Route
           path="/register"
           element={
-            isAuthenticated() ? (
+            isAuthenticated ? (
               role === "admin" ? (
                 <Navigate to="/admin" />
               ) : (
@@ -56,7 +64,7 @@ const App = () => {
         <Route
           path="/dashboard"
           element={
-            isAuthenticated() && role === "user" ? (
+            isAuthenticated && role === "user" ? (
               <Dashboard />
             ) : (
               <Navigate to="/" />
@@ -68,7 +76,7 @@ const App = () => {
         <Route
           path="/admin"
           element={
-            isAuthenticated() && role === "admin" ? (
+            isAuthenticated && role === "admin" ? (
               <AdminDashboard />
             ) : (
               <Navigate to="/" />

@@ -17,19 +17,13 @@ const AdminDashboard = () => {
       try {
         const token = localStorage.getItem("token");
 
-        if (!token) {
-          console.log("No hay token")
-          navigate("/", { replace: true });
-          return;
+        if (token) {
+          var authResponse = await api.get("me/", {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
         }
-
-        console.log("TOKEN ADMIN DASH", token)
-
-        const authResponse = await api.get("me/", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
 
         setAuthenticatedUser(authResponse.data);
 

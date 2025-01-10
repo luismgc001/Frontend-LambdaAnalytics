@@ -9,28 +9,12 @@ const Login = () => {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  // Redirigir si ya está autenticado
-  useEffect(() => {
-    setError("");
-    const token = localStorage.getItem("token");
-    const role = localStorage.getItem("role");
-
-    if (token && role) {
-      // Redirige basado en el rol
-      
-      if (role === "admin") {
-        navigate("/admin", { replace: true });
-      } else {
-        navigate("/dashboard", { replace: true });
-      }
-    }
-  }, [navigate]); // Solo se ejecuta al montar el componente
-
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
       // Realiza la solicitud al endpoint de login
       const response = await api.post("login/", { email, password });
+      console.log("Response from login:", response.data);
       const { access, role } = response.data;
 
       // Almacena el token y el rol en localStorage
@@ -40,7 +24,8 @@ const Login = () => {
       // Limpia errores y redirige basado en el rol
       setError("");
       if (role === "admin") {
-        navigate("/admin", { replace: true }); // Redirige a la página de administrador
+        console.log("ROL ADMIN")
+        window.location.href = "/admin"; // Redirige a la página de administrador
       } else {
         navigate("/dashboard", { replace: true }); // Redirige a la página de usuario normal
       }
