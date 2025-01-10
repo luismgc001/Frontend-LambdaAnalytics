@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import "../styles/ListaDeseos.css";
 
 const ListaDeseos = ({ deseos, eliminarDeDeseos }) => {
   return (
@@ -17,7 +18,9 @@ const ListaDeseos = ({ deseos, eliminarDeDeseos }) => {
             <a href={articulo.url} target="_blank" rel="noopener noreferrer">
               Ver en Mercado Libre
             </a>
-            <button onClick={() => eliminarDeDeseos(articulo.id)}>Eliminar</button>
+            <button onClick={() => eliminarDeDeseos(articulo.id)}>
+              Eliminar
+            </button>
           </div>
         ))}
       </div>

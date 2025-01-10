@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Resultados from "./Resultados";
 import api from "../api/api";
 import "../styles/Dashboard.css";
@@ -10,6 +10,8 @@ const Dashboard = ({ deseos, setDeseos }) => {
   const [recomendaciones, setRecomendaciones] = useState(null); // Datos transformados (transformed_data)
   const [busqueda, setBusqueda] = useState("");
   const [cargando, setCargando] = useState(false);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     const userRole = localStorage.getItem("role");
@@ -32,10 +34,11 @@ const Dashboard = ({ deseos, setDeseos }) => {
       console.log("DATA", data);
       setArticulos(data.raw_data); // Guarda los datos sin transformar
       setRecomendaciones(data.transformed_data); // Guarda los datos transformados
-      setCargando(false);
     } catch (error) {
       console.error(error);
       alert("Ocurrió un error al buscar los artículos.");
+    } finally {
+      setCargando(false);
     }
   };
 
@@ -51,7 +54,17 @@ const Dashboard = ({ deseos, setDeseos }) => {
 
   return (
     <div className="dashboard">
-      <h1>Buscar en Mercado Libre</h1>
+      <div className="header-container">
+        <h1>Buscar en Mercado Libre</h1>
+        {role === "user" && (
+          <button
+            className="btn-lista-deseos"
+            onClick={() => navigate("/lista-deseos")}
+          >
+            Lista de Deseos ({deseos.length})
+          </button>
+        )}
+      </div>
 
       {role === "user" && (
         <div className="busqueda-container">
@@ -63,18 +76,23 @@ const Dashboard = ({ deseos, setDeseos }) => {
             onKeyDown={handleKeyDown} // Detecta la tecla Enter
           />
           <button onClick={obtenerArticulos}>Buscar</button>
-          <Link to="/lista-deseos" className="link-deseos">
-            Ver Lista de Deseos
-          </Link>
         </div>
       )}
 
-      {role === "user" && (
+      {/* Indicador de carga */}
+      {cargando && (
+        <div className="loading-indicator">
+          <div className="spinner"></div>
+          <p>Buscando artículos...</p>
+        </div>
+      )}
+
+      {role === "user" && !cargando && (
         <div className="dashboard-content">
-          {/* Recomendaciones*/}
-            {recomendaciones && (
-          <div className="recomendaciones">
-            <h2>Recomendaciones:</h2>
+          {/* Recomendaciones */}
+          {recomendaciones && (
+            <div className="recomendaciones">
+              <h2>Recomendaciones:</h2>
               <div className="recomendaciones-list">
                 {/* Producto con precio más bajo */}
                 <div className="articulo-recomendado">
@@ -85,7 +103,11 @@ const Dashboard = ({ deseos, setDeseos }) => {
                   />
                   <h4>{recomendaciones.ArticuloPrecioBajo.nombre}</h4>
                   <p>{recomendaciones.ArticuloPrecioBajo.precio}</p>
-                  <button onClick={() => agregarADeseos(recomendaciones.ArticuloPrecioBajo)}>
+                  <button
+                    onClick={() =>
+                      agregarADeseos(recomendaciones.ArticuloPrecioBajo)
+                    }
+                  >
                     Agregar a lista de deseos
                   </button>
                 </div>
@@ -100,7 +122,9 @@ const Dashboard = ({ deseos, setDeseos }) => {
                   <h4>{recomendaciones.ArticuloMejorCalificacion.nombre}</h4>
                   <p>{recomendaciones.ArticuloMejorCalificacion.precio}</p>
                   <button
-                    onClick={() => agregarADeseos(recomendaciones.ArticuloMejorCalificacion)}
+                    onClick={() =>
+                      agregarADeseos(recomendaciones.ArticuloMejorCalificacion)
+                    }
                   >
                     Agregar a lista de deseos
                   </button>
@@ -115,7 +139,11 @@ const Dashboard = ({ deseos, setDeseos }) => {
                   />
                   <h4>{recomendaciones.ArticuloDescuentoAlto.nombre}</h4>
                   <p>{recomendaciones.ArticuloDescuentoAlto.precio}</p>
-                  <button onClick={() => agregarADeseos(recomendaciones.ArticuloDescuentoAlto)}>
+                  <button
+                    onClick={() =>
+                      agregarADeseos(recomendaciones.ArticuloDescuentoAlto)
+                    }
+                  >
                     Agregar a lista de deseos
                   </button>
                 </div>
@@ -129,7 +157,11 @@ const Dashboard = ({ deseos, setDeseos }) => {
                   />
                   <h4>{recomendaciones.ArticuloPrecioAlto.nombre}</h4>
                   <p>{recomendaciones.ArticuloPrecioAlto.precio}</p>
-                  <button onClick={() => agregarADeseos(recomendaciones.ArticuloPrecioAlto)}>
+                  <button
+                    onClick={() =>
+                      agregarADeseos(recomendaciones.ArticuloPrecioAlto)
+                    }
+                  >
                     Agregar a lista de deseos
                   </button>
                 </div>
@@ -138,22 +170,25 @@ const Dashboard = ({ deseos, setDeseos }) => {
                 <div className="precio-promedio">
                   <h3>Precio Promedio</h3>
                   <p>
-                    <strong>${recomendaciones.PrecioPromedio.toLocaleString("es-CO")}</strong>
+                    <strong>
+                      ${recomendaciones.PrecioPromedio.toLocaleString("es-CO")}
+                    </strong>
                   </p>
                 </div>
               </div>
-              </div>
-            )}
-          
+            </div>
+          )}
 
           {/* Resultados de búsqueda */}
           {articulos && (
             <div className="tabla-resultados">
-            <h2>Resultados de búsqueda</h2>
-            <Resultados articulos={articulos} agregarADeseos={agregarADeseos} />
-          </div>
+              <h2>Resultados de búsqueda</h2>
+              <Resultados
+                articulos={articulos}
+                agregarADeseos={agregarADeseos}
+              />
+            </div>
           )}
-          
         </div>
       )}
     </div>
