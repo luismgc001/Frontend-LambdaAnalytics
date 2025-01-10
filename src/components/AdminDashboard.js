@@ -13,14 +13,11 @@ const AdminDashboard = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    
     const fetchUsers = async () => {
-      
       try {
         const token = localStorage.getItem("token");
 
         if (!token) {
-          console.log("No hay token");
           window.location.href = "/";
           // navigate("/", { replace: true }); Metodo no funciona correctamente
           return;
@@ -154,7 +151,11 @@ const AdminDashboard = () => {
                       <button
                         className="deactivate"
                         onClick={() => deactivateUser(user.id)}
-                        disabled={!user.is_active || (authenticatedUser && authenticatedUser.id === user.id)}
+                        disabled={
+                          !user.is_active ||
+                          (authenticatedUser &&
+                            authenticatedUser.id === user.id)
+                        }
                       >
                         Desactivar
                       </button>

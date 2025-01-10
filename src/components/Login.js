@@ -14,7 +14,6 @@ const Login = () => {
     try {
       // Realiza la solicitud al endpoint de login
       const response = await api.post("login/", { email, password });
-      console.log("Response from login:", response.data);
       const { access, role } = response.data;
 
       // Almacena el token y el rol en localStorage
@@ -24,7 +23,6 @@ const Login = () => {
       // Limpia errores y redirige basado en el rol
       setError("");
       if (role === "admin") {
-        console.log("ROL ADMIN");
         window.location.href = "/admin"; // Redirige a la página de administrador
       } else {
         window.location.href = "/dashboard";

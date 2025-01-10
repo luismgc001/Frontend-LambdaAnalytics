@@ -9,7 +9,6 @@ const ListaDeseos = ({ deseos, eliminarDeDeseos, setDeseos }) => {
     const obtenerDeseos = async () => {
       try {
         const response = await api.get("/lista-deseos/");
-        console.log("LISTA DESEOS DATA", response.data);
         setDeseos(response.data);
       } catch (error) {
         console.error("Error al obtener la lista de deseos:", error);
