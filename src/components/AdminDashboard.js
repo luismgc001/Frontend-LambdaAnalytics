@@ -33,7 +33,10 @@ const AdminDashboard = () => {
           },
         });
 
-        setUsers(usersResponse.data);
+         // Filtrar solo los usuarios activos
+         const activeUsers = usersResponse.data.filter((user) => user.is_active);
+         setUsers(activeUsers);        
+        console.log("USUARIOS: ", usersResponse.data)
       } catch (err) {
         if (err.response && err.response.status === 401) {
           navigate("/", { replace: true });

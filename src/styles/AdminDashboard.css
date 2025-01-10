@@ -113,3 +113,21 @@ button:disabled {
     opacity: 0.9;
 }
 
+.inactive-user {
+    background-color: #f8d7da; /* Fondo rojo claro para usuarios inactivos */
+    color: #721c24;
+  }
+  
+  .active-indicator {
+    color: #28a745; /* Verde para usuarios activos */
+  }
+  
+  .inactive-indicator {
+    color: #dc3545; /* Rojo para usuarios inactivos */
+  }
+  
+  .deactivate:disabled {
+    opacity: 0.6; /* Botón deshabilitado más claro */
+    cursor: not-allowed;
+  }
+  
