@@ -1,9 +1,11 @@
 import React from "react";
+import "../styles/Resultados.css";
 
 const Resultados = ({ articulos, agregarADeseos }) => {
+  const articulosLimitados = articulos?.slice(0, 25);
   return (
     <div className="resultados">
-      {articulos.map((articulo, index) => (
+      {articulosLimitados?.map((articulo, index) => (
         <div key={articulo.enlace || index} className="articulo">
           <img src={articulo.imagen} alt={articulo.nombre} />
           <h3>{articulo.nombre}</h3>

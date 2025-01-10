@@ -9,10 +9,12 @@ import Login from "./components/Login";
 import Register from "./components/Register";
 import Dashboard from "./components/Dashboard";
 import AdminDashboard from "./components/AdminDashboard";
+import ListaDeseos from "./components/ListaDeseos";
 
 const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [role, setRole] = useState(null);
+  const [deseos, setDeseos] = useState([]); // Estado para la lista de deseos
 
   // Verifica autenticación al cargar la aplicación
   useEffect(() => {
@@ -24,6 +26,11 @@ const App = () => {
       setRole(userRole);
     }
   }, []);
+
+  // Función para eliminar artículos de la lista de deseos
+  const eliminarDeDeseos = (id) => {
+    setDeseos((prev) => prev.filter((articulo) => articulo.id !== id));
+  };
 
   return (
     <Router>
@@ -65,7 +72,7 @@ const App = () => {
           path="/dashboard"
           element={
             isAuthenticated && role === "user" ? (
-              <Dashboard />
+              <Dashboard deseos={deseos} setDeseos={setDeseos} />
             ) : (
               <Navigate to="/" />
             )
@@ -78,6 +85,18 @@ const App = () => {
           element={
             isAuthenticated && role === "admin" ? (
               <AdminDashboard />
+            ) : (
+              <Navigate to="/" />
+            )
+          }
+        />
+
+        {/* Ruta para la Lista de Deseos */}
+        <Route
+          path="/lista-deseos"
+          element={
+            isAuthenticated && role === "user" ? (
+              <ListaDeseos deseos={deseos} eliminarDeDeseos={eliminarDeDeseos} />
             ) : (
               <Navigate to="/" />
             )

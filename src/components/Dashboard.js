@@ -1,24 +1,21 @@
 import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import Resultados from "./Resultados";
-import ListaDeseos from "./ListaDeseos";
 import api from "../api/api";
 import "../styles/Dashboard.css";
 
-const Dashboard = () => {
+const Dashboard = ({ deseos, setDeseos }) => {
   const [role, setRole] = useState(null);
-  const [articulos, setArticulos] = useState([]); // Estado para los artículos
-  const [busqueda, setBusqueda] = useState(""); // Estado para la consulta de búsqueda
+  const [articulos, setArticulos] = useState([]); // Datos originales (raw_data)
+  const [recomendaciones, setRecomendaciones] = useState(null); // Datos transformados (transformed_data)
+  const [busqueda, setBusqueda] = useState("");
   const [cargando, setCargando] = useState(false);
 
-   
-
   useEffect(() => {
-    // Obtén el rol del usuario desde localStorage
     const userRole = localStorage.getItem("role");
     setRole(userRole);
   }, []);
 
-  // Función para obtener artículos según la búsqueda
   const obtenerArticulos = async () => {
     if (!busqueda.trim()) {
       alert("Por favor ingresa un término de búsqueda.");
@@ -28,12 +25,13 @@ const Dashboard = () => {
 
     try {
       const response = await api.get("search/", {
-        params: { query: busqueda }, // Parámetros de consulta
+        params: { query: busqueda },
       });
-      
-      
+
       const data = response.data;
-      setArticulos(data); // Actualiza el estado con los resultados
+      console.log("DATA", data);
+      setArticulos(data.raw_data); // Guarda los datos sin transformar
+      setRecomendaciones(data.transformed_data); // Guarda los datos transformados
       setCargando(false);
     } catch (error) {
       console.error(error);
@@ -41,34 +39,119 @@ const Dashboard = () => {
     }
   };
 
+  const handleKeyDown = (event) => {
+    if (event.key === "Enter") {
+      obtenerArticulos();
+    }
+  };
+
+  const agregarADeseos = (articulo) => {
+    setDeseos((prev) => [...prev, articulo]);
+  };
+
   return (
     <div className="dashboard">
-      <h1>Dashboard</h1>
+      <h1>Buscar en Mercado Libre</h1>
 
-      {/* Input y botón de búsqueda */}
-      {cargando && (<p>Cargando resultados...</p>)}
       {role === "user" && (
         <div className="busqueda-container">
           <input
             type="text"
             placeholder="Buscar artículos..."
             value={busqueda}
-            onChange={(e) => setBusqueda(e.target.value)} // Actualiza el estado de búsqueda
+            onChange={(e) => setBusqueda(e.target.value)}
+            onKeyDown={handleKeyDown} // Detecta la tecla Enter
           />
           <button onClick={obtenerArticulos}>Buscar</button>
+          <Link to="/lista-deseos" className="link-deseos">
+            Ver Lista de Deseos
+          </Link>
         </div>
       )}
 
-      {/* Mostrar componentes solo si el rol es "user" */}
       {role === "user" && (
-        <>
-          <Resultados articulos={articulos} />
-          <ListaDeseos />
-        </>
-      )}
+        <div className="dashboard-content">
+          {/* Recomendaciones ETL */}
+          <div className="recomendaciones">
+            <h2>Recomendaciones ETL</h2>
+            {recomendaciones && (
+              <div className="recomendaciones-list">
+                {/* Producto con precio más bajo */}
+                <div className="articulo-recomendado">
+                  <h3>Producto con precio más bajo</h3>
+                  <img
+                    src={recomendaciones.ArticuloPrecioBajo.imagen}
+                    alt={recomendaciones.ArticuloPrecioBajo.nombre}
+                  />
+                  <h4>{recomendaciones.ArticuloPrecioBajo.nombre}</h4>
+                  <p>{recomendaciones.ArticuloPrecioBajo.precio}</p>
+                  <button onClick={() => agregarADeseos(recomendaciones.ArticuloPrecioBajo)}>
+                    Agregar a lista de deseos
+                  </button>
+                </div>
 
-      {/* Mensaje para usuarios admin */}
-      {role === "admin" && <p>Bienvenido al Dashboard de Administrador.</p>}
+                {/* Producto mejor calificado */}
+                <div className="articulo-recomendado">
+                  <h3>Producto mejor calificado</h3>
+                  <img
+                    src={recomendaciones.ArticuloMejorCalificacion.imagen}
+                    alt={recomendaciones.ArticuloMejorCalificacion.nombre}
+                  />
+                  <h4>{recomendaciones.ArticuloMejorCalificacion.nombre}</h4>
+                  <p>{recomendaciones.ArticuloMejorCalificacion.precio}</p>
+                  <button
+                    onClick={() => agregarADeseos(recomendaciones.ArticuloMejorCalificacion)}
+                  >
+                    Agregar a lista de deseos
+                  </button>
+                </div>
+
+                {/* Producto con mejor descuento */}
+                <div className="articulo-recomendado">
+                  <h3>Producto con mejor descuento</h3>
+                  <img
+                    src={recomendaciones.ArticuloDescuentoAlto.imagen}
+                    alt={recomendaciones.ArticuloDescuentoAlto.nombre}
+                  />
+                  <h4>{recomendaciones.ArticuloDescuentoAlto.nombre}</h4>
+                  <p>{recomendaciones.ArticuloDescuentoAlto.precio}</p>
+                  <button onClick={() => agregarADeseos(recomendaciones.ArticuloDescuentoAlto)}>
+                    Agregar a lista de deseos
+                  </button>
+                </div>
+
+                {/* Producto con precio más alto */}
+                <div className="articulo-recomendado">
+                  <h3>Producto con precio más alto</h3>
+                  <img
+                    src={recomendaciones.ArticuloPrecioAlto.imagen}
+                    alt={recomendaciones.ArticuloPrecioAlto.nombre}
+                  />
+                  <h4>{recomendaciones.ArticuloPrecioAlto.nombre}</h4>
+                  <p>{recomendaciones.ArticuloPrecioAlto.precio}</p>
+                  <button onClick={() => agregarADeseos(recomendaciones.ArticuloPrecioAlto)}>
+                    Agregar a lista de deseos
+                  </button>
+                </div>
+
+                {/* Precio promedio */}
+                <div className="precio-promedio">
+                  <h3>Precio Promedio</h3>
+                  <p>
+                    <strong>${recomendaciones.PrecioPromedio.toLocaleString("es-CO")}</strong>
+                  </p>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Resultados de búsqueda */}
+          <div className="tabla-resultados">
+            <h2>Resultados de búsqueda</h2>
+            <Resultados articulos={articulos} agregarADeseos={agregarADeseos} />
+          </div>
+        </div>
+      )}
     </div>
   );
 };
