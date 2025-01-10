@@ -49,7 +49,9 @@ const App = () => {
 
   // Función para eliminar artículos de la lista de deseos
   const eliminarDeDeseos = (id) => {
+    console.log("Antes de eliminar:", deseos);
     setDeseos((prev) => prev.filter((articulo) => articulo.id !== id));
+    console.log("Después de eliminar:", deseos);
   };
 
   return (
@@ -116,7 +118,10 @@ const App = () => {
           path="/lista-deseos"
           element={
             isAuthenticated && role === "user" ? (
-              <ListaDeseos deseos={deseos} eliminarDeDeseos={eliminarDeDeseos} />
+              <ListaDeseos
+                deseos={deseos}
+                eliminarDeDeseos={eliminarDeDeseos}
+              />
             ) : (
               <Navigate to="/" />
             )

@@ -33,6 +33,7 @@ const Dashboard = ({ deseos, setDeseos }) => {
       const data = response.data;
       setArticulos(data.raw_data); // Guarda los datos sin transformar
       setRecomendaciones(data.transformed_data); // Guarda los datos transformados
+      console.log("RECOMENDACIONES", data.transformed_data);
     } catch (error) {
       console.error(error);
       alert("Ocurrió un error al buscar los artículos.");
@@ -48,7 +49,11 @@ const Dashboard = ({ deseos, setDeseos }) => {
   };
 
   const agregarADeseos = (articulo) => {
-    setDeseos((prev) => [...prev, articulo]);
+    const articuloConId = {
+      ...articulo,
+      id: Date.now(), // Genera un ID único basado en la fecha actual
+    };
+    setDeseos((prev) => [...prev, articuloConId]);
   };
 
   const handleLogout = () => {
@@ -102,24 +107,46 @@ const Dashboard = ({ deseos, setDeseos }) => {
             <div className="recomendaciones">
               <h2>Recomendaciones:</h2>
               <div className="recomendaciones-list">
-                {/* Producto con precio más bajo */}
-                <div className="articulo-recomendado">
-                  <h3>Producto con precio más bajo</h3>
-                  <img
-                    src={recomendaciones.ArticuloPrecioBajo.imagen}
-                    alt={recomendaciones.ArticuloPrecioBajo.nombre}
-                  />
-                  <h4>{recomendaciones.ArticuloPrecioBajo.nombre}</h4>
-                  <p>{recomendaciones.ArticuloPrecioBajo.precio}</p>
-                  <button
-                    onClick={() =>
-                      agregarADeseos(recomendaciones.ArticuloPrecioBajo)
-                    }
-                  >
-                    Agregar a lista de deseos
-                  </button>
-                </div>
-                {/* Otros productos... */}
+                {Object.entries(recomendaciones).map(([key, value]) => {
+                  // Mapear los nombres clave a nombres más descriptivos
+                  const keyMap = {
+                    ArticuloPrecioBajo: "Artículo con el Precio más Bajo",
+                    ArticuloPrecioAlto: "Artículo con el Precio más Alto",
+                    ArticuloMejorCalificacion:
+                      "Artículo con la Mejor Calificación",
+                    ArticuloDescuentoAlto: "Artículo con el Mayor Descuento",
+                  };
+
+                  const displayKey = keyMap[key] || key; // Usa el nombre mapeado o el nombre original si no está mapeado
+
+                  return (
+                    key !== "PrecioPromedio" && ( // Ignorar el precio promedio para el mapeo
+                      <div key={key} className="articulo-recomendado">
+                        <h3>{displayKey}</h3>
+                        <img src={value.imagen} alt={value.nombre} />
+                        <h4>{value.nombre}</h4>
+                        <p>{value.precio}</p>
+                        <a
+                          href={value.enlace}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          Ver en Mercado Libre
+                        </a>
+                        <button onClick={() => agregarADeseos(value)}>
+                          Agregar a lista de deseos
+                        </button>
+                      </div>
+                    )
+                  );
+                })}
+                {/* Mostrar precio promedio */}
+                {recomendaciones.PrecioPromedio && (
+                  <div className="articulo-recomendado">
+                    <h3>Precio Promedio</h3>
+                    <p>${recomendaciones.PrecioPromedio.toLocaleString()}</p>
+                  </div>
+                )}
               </div>
             </div>
           )}
