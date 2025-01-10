@@ -15,7 +15,7 @@ const App = () => {
   const isAuthenticated = () => !!localStorage.getItem("token");
 
   // Obtiene el rol del usuario
-  const getRole = () => localStorage.getItem("role");
+  const role = localStorage.getItem("role");
 
   return (
     <Router>
@@ -25,7 +25,7 @@ const App = () => {
           path="/"
           element={
             isAuthenticated() ? (
-              getRole() === "admin" ? (
+              role === "admin" ? (
                 <Navigate to="/admin" />
               ) : (
                 <Navigate to="/dashboard" />
@@ -41,7 +41,7 @@ const App = () => {
           path="/register"
           element={
             isAuthenticated() ? (
-              getRole() === "admin" ? (
+              role === "admin" ? (
                 <Navigate to="/admin" />
               ) : (
                 <Navigate to="/dashboard" />
@@ -56,7 +56,7 @@ const App = () => {
         <Route
           path="/dashboard"
           element={
-            isAuthenticated() && getRole() === "user" ? (
+            isAuthenticated() && role === "user" ? (
               <Dashboard />
             ) : (
               <Navigate to="/" />
@@ -68,7 +68,7 @@ const App = () => {
         <Route
           path="/admin"
           element={
-            isAuthenticated() && getRole() === "admin" ? (
+            isAuthenticated() && role === "admin" ? (
               <AdminDashboard />
             ) : (
               <Navigate to="/" />

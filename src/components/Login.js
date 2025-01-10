@@ -11,11 +11,13 @@ const Login = () => {
 
   // Redirigir si ya está autenticado
   useEffect(() => {
+    setError("");
     const token = localStorage.getItem("token");
     const role = localStorage.getItem("role");
 
     if (token && role) {
       // Redirige basado en el rol
+      
       if (role === "admin") {
         navigate("/admin", { replace: true });
       } else {

@@ -18,9 +18,12 @@ const AdminDashboard = () => {
         const token = localStorage.getItem("token");
 
         if (!token) {
+          console.log("No hay token")
           navigate("/", { replace: true });
           return;
         }
+
+        console.log("TOKEN ADMIN DASH", token)
 
         const authResponse = await api.get("me/", {
           headers: {
