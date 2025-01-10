@@ -17,13 +17,17 @@ const AdminDashboard = () => {
       try {
         const token = localStorage.getItem("token");
 
-        if (token) {
-          var authResponse = await api.get("me/", {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          });
+        if (!token) {
+          console.log("No hay token");
+          navigate("/", { replace: true });
+          return;
         }
+
+        const authResponse = await api.get("me/", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
         setAuthenticatedUser(authResponse.data);
 
@@ -33,10 +37,8 @@ const AdminDashboard = () => {
           },
         });
 
-         // Filtrar solo los usuarios activos
-         const activeUsers = usersResponse.data.filter((user) => user.is_active);
-         setUsers(activeUsers);        
-        console.log("USUARIOS: ", usersResponse.data)
+        // Muestra todos los usuarios (activos e inactivos)
+        setUsers(usersResponse.data);
       } catch (err) {
         if (err.response && err.response.status === 401) {
           navigate("/", { replace: true });
@@ -49,27 +51,33 @@ const AdminDashboard = () => {
     fetchUsers();
   }, [navigate]);
 
-  // Función para desactivar un usuario
   const deactivateUser = async (userId) => {
     try {
       const token = localStorage.getItem("token");
+
       await api.delete(`users/${userId}/deactivate/`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
+
       alert("Usuario desactivado correctamente.");
-      setUsers(users.filter((user) => user.id !== userId));
+
+      // Actualizar el estado local
+      setUsers((prevUsers) =>
+        prevUsers.map((user) =>
+          user.id === userId ? { ...user, is_active: false } : user
+        )
+      );
     } catch (err) {
       setError("No tienes permiso para desactivar usuarios.");
     }
   };
 
-  // Función para cerrar sesión
   const handleLogout = () => {
     localStorage.removeItem("token"); // Elimina el token
     localStorage.removeItem("role"); // Opcional: Elimina también el rol
-    window.location.href = "/"; // Redirige al login
+    navigate("/"); // Redirige al login
   };
 
   return (
@@ -104,17 +112,29 @@ const AdminDashboard = () => {
                 <th>Nombre</th>
                 <th>Apellido</th>
                 <th>Rol</th>
+                <th>Estado</th>
                 <th>Acciones</th>
               </tr>
             </thead>
             <tbody>
               {users.map((user) => (
-                <tr key={user.id}>
+                <tr
+                  key={user.id}
+                  className={!user.is_active ? "inactive-user" : ""}
+                >
                   <td>{user.id}</td>
                   <td>{user.email}</td>
                   <td>{user.first_name}</td>
                   <td>{user.last_name}</td>
                   <td>{user.role}</td>
+                  {/* Mostrar el estado del usuario */}
+                  <td>
+                    {user.is_active ? (
+                      <span className="active-indicator">Activo</span>
+                    ) : (
+                      <span className="inactive-indicator">Inactivo</span>
+                    )}
+                  </td>
                   <td>
                     <div className="actions">
                       <button
@@ -129,9 +149,7 @@ const AdminDashboard = () => {
                       <button
                         className="deactivate"
                         onClick={() => deactivateUser(user.id)}
-                        disabled={
-                          authenticatedUser && authenticatedUser.id === user.id
-                        } // Deshabilitar si es el usuario autenticado
+                        disabled={!user.is_active || (authenticatedUser && authenticatedUser.id === user.id)}
                       >
                         Desactivar
                       </button>
