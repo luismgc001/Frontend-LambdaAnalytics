@@ -92,8 +92,8 @@
   }
   
   .recomendaciones-list {
-    display: block;
-    grid-template-columns: repeat(3, 1fr);
+    display: flex;
+  flex-direction: column;
     gap: 20px;
   }
   
@@ -104,6 +104,10 @@
     text-align: center;
     background-color: #fff;
     transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
   }
   
   .articulo-recomendado:hover {

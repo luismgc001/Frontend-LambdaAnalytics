@@ -1,11 +1,24 @@
 .resultados {
   display: grid;
-  grid-template-columns: repeat(5, 1fr); /* 5 columnas */
   gap: 20px; /* Espacio entre las tarjetas */
   padding: 20px;
+  @media(max-width: 600px) {
+    grid-template-columns: repeat(1, 1fr); /* 5 columnas */
+  }
+  @media(min-width: 1000px) {
+    grid-template-columns: repeat(2, 1fr); /* 5 columnas */
+  }
+  @media(min-width: 1600px) {
+    grid-template-columns: repeat(4, 1fr); /* 5 columnas */
+  }
+  
 }
 
 .articulo {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
   border: 1px solid #ddd;
   border-radius: 8px;
   padding: 10px;

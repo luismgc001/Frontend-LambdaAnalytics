@@ -130,6 +130,7 @@ const Dashboard = ({ deseos, setDeseos }) => {
                           href={value.enlace}
                           target="_blank"
                           rel="noopener noreferrer"
+                          style={{ paddingBottom: "1rem" }}
                         >
                           Ver en Mercado Libre
                         </a>

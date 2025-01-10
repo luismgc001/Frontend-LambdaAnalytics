@@ -11,16 +11,18 @@ const ListaDeseos = ({ deseos, eliminarDeDeseos }) => {
       </Link>
       <div className="lista-deseos-content">
         {deseos?.map((articulo) => (
-          <div key={articulo.id} className="articulo">
-            <img src={articulo.imagen} alt={articulo.nombre} />
-            <h3>{articulo.nombre}</h3>
-            <p>Precio: {articulo.precio}</p>
-            <a href={articulo.url} target="_blank" rel="noopener noreferrer">
-              Ver en Mercado Libre
-            </a>
-            <button onClick={() => eliminarDeDeseos(articulo.id)}>
-              Eliminar
-            </button>
+          <div style={{ display: "flex", justifyContent: "center" }}>
+            <div key={articulo.id} className="articulo">
+              <img src={articulo.imagen} alt={articulo.nombre} />
+              <h3>{articulo.nombre}</h3>
+              <p>Precio: {articulo.precio}</p>
+              <a href={articulo.url} target="_blank" rel="noopener noreferrer">
+                Ver en Mercado Libre
+              </a>
+              <button onClick={() => eliminarDeDeseos(articulo.id)}>
+                Eliminar
+              </button>
+            </div>
           </div>
         ))}
       </div>
