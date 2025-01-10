@@ -1,60 +1,49 @@
-.resultados-grid {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr); /* 5 columnas */
-    gap: 20px;
-    margin-top: 20px;
-  }
-  
-  .articulo-card {
-    position: relative;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    padding: 10px;
-    text-align: center;
-    background-color: #fff;
-    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-    cursor: pointer;
-  }
-  
-  .articulo-card:hover {
-    transform: scale(1.05); /* Efecto de agrandamiento */
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Sombra al pasar el cursor */
-  }
-  
-  .articulo-card img {
-    width: 100px;
-    height: auto;
-    margin-bottom: 10px;
-  }
-  
-  .articulo-card h3 {
-    font-size: 14px;
-    margin-bottom: 5px;
-  }
-  
-  .articulo-card p {
-    font-size: 12px;
-    color: #666;
-  }
-  
-  .overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: rgba(0, 0, 0, 0.6);
-    color: #fff;
-    font-size: 14px;
-    opacity: 0;
-    border-radius: 8px;
-    transition: opacity 0.3s ease-in-out;
-  }
-  
-  .articulo-card:hover .overlay {
-    opacity: 1; /* Muestra el overlay al pasar el cursor */
-  }
-  
+.resultados {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr); /* 5 columnas */
+  gap: 20px; /* Espacio entre las tarjetas */
+  padding: 20px;
+}
+
+.articulo {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 10px;
+  text-align: center;
+  background-color: #fff;
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.articulo:hover {
+  transform: scale(1.05); /* Efecto de agrandamiento */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Sombra */
+}
+
+.articulo img {
+  width: 100px;
+  height: auto;
+  margin-bottom: 10px;
+}
+
+.articulo h3 {
+  font-size: 14px;
+  margin-bottom: 5px;
+}
+
+.articulo p {
+  font-size: 12px;
+  color: #666;
+}
+
+.articulo button {
+  padding: 8px 16px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.articulo button:hover {
+  background-color: #0056b3;
+}

@@ -2,7 +2,8 @@ import React from "react";
 import "../styles/Resultados.css";
 
 const Resultados = ({ articulos, agregarADeseos }) => {
-  const articulosLimitados = articulos?.slice(0, 25);
+  const articulosLimitados = articulos?.slice(0, 25); // Limita a 25 resultados
+
   return (
     <div className="resultados">
       {articulosLimitados?.map((articulo, index) => (
@@ -10,7 +11,9 @@ const Resultados = ({ articulos, agregarADeseos }) => {
           <img src={articulo.imagen} alt={articulo.nombre} />
           <h3>{articulo.nombre}</h3>
           <p>Precio: {articulo.precio}</p>
-          <button onClick={() => agregarADeseos(articulo)}>Agregar a Lista de Deseos</button>
+          <button onClick={() => agregarADeseos(articulo)}>
+            Agregar a Lista de Deseos
+          </button>
         </div>
       ))}
     </div>

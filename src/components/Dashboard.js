@@ -31,7 +31,6 @@ const Dashboard = ({ deseos, setDeseos }) => {
       });
 
       const data = response.data;
-      console.log("DATA", data);
       setArticulos(data.raw_data); // Guarda los datos sin transformar
       setRecomendaciones(data.transformed_data); // Guarda los datos transformados
     } catch (error) {
@@ -52,16 +51,19 @@ const Dashboard = ({ deseos, setDeseos }) => {
     setDeseos((prev) => [...prev, articulo]);
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem("token"); // Elimina el token
+    localStorage.removeItem("role"); // Opcional: Elimina también el rol
+    window.location.href = "/";
+  };
+
   return (
     <div className="dashboard">
       <div className="header-container">
         <h1>Buscar en Mercado Libre</h1>
         {role === "user" && (
-          <button
-            className="btn-lista-deseos"
-            onClick={() => navigate("/lista-deseos")}
-          >
-            Lista de Deseos ({deseos.length})
+          <button className="btn-cerrar-sesion" onClick={handleLogout}>
+            Cerrar Sesión
           </button>
         )}
       </div>
@@ -76,6 +78,12 @@ const Dashboard = ({ deseos, setDeseos }) => {
             onKeyDown={handleKeyDown} // Detecta la tecla Enter
           />
           <button onClick={obtenerArticulos}>Buscar</button>
+          <button
+            className="btn-lista-deseos"
+            onClick={() => navigate("/lista-deseos")}
+          >
+            Lista de Deseos ({deseos.length})
+          </button>
         </div>
       )}
 
@@ -111,70 +119,7 @@ const Dashboard = ({ deseos, setDeseos }) => {
                     Agregar a lista de deseos
                   </button>
                 </div>
-
-                {/* Producto mejor calificado */}
-                <div className="articulo-recomendado">
-                  <h3>Producto mejor calificado</h3>
-                  <img
-                    src={recomendaciones.ArticuloMejorCalificacion.imagen}
-                    alt={recomendaciones.ArticuloMejorCalificacion.nombre}
-                  />
-                  <h4>{recomendaciones.ArticuloMejorCalificacion.nombre}</h4>
-                  <p>{recomendaciones.ArticuloMejorCalificacion.precio}</p>
-                  <button
-                    onClick={() =>
-                      agregarADeseos(recomendaciones.ArticuloMejorCalificacion)
-                    }
-                  >
-                    Agregar a lista de deseos
-                  </button>
-                </div>
-
-                {/* Producto con mejor descuento */}
-                <div className="articulo-recomendado">
-                  <h3>Producto con mejor descuento</h3>
-                  <img
-                    src={recomendaciones.ArticuloDescuentoAlto.imagen}
-                    alt={recomendaciones.ArticuloDescuentoAlto.nombre}
-                  />
-                  <h4>{recomendaciones.ArticuloDescuentoAlto.nombre}</h4>
-                  <p>{recomendaciones.ArticuloDescuentoAlto.precio}</p>
-                  <button
-                    onClick={() =>
-                      agregarADeseos(recomendaciones.ArticuloDescuentoAlto)
-                    }
-                  >
-                    Agregar a lista de deseos
-                  </button>
-                </div>
-
-                {/* Producto con precio más alto */}
-                <div className="articulo-recomendado">
-                  <h3>Producto con precio más alto</h3>
-                  <img
-                    src={recomendaciones.ArticuloPrecioAlto.imagen}
-                    alt={recomendaciones.ArticuloPrecioAlto.nombre}
-                  />
-                  <h4>{recomendaciones.ArticuloPrecioAlto.nombre}</h4>
-                  <p>{recomendaciones.ArticuloPrecioAlto.precio}</p>
-                  <button
-                    onClick={() =>
-                      agregarADeseos(recomendaciones.ArticuloPrecioAlto)
-                    }
-                  >
-                    Agregar a lista de deseos
-                  </button>
-                </div>
-
-                {/* Precio promedio */}
-                <div className="precio-promedio">
-                  <h3>Precio Promedio</h3>
-                  <p>
-                    <strong>
-                      ${recomendaciones.PrecioPromedio.toLocaleString("es-CO")}
-                    </strong>
-                  </p>
-                </div>
+                {/* Otros productos... */}
               </div>
             </div>
           )}
