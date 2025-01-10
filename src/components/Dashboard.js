@@ -6,7 +6,7 @@ import "../styles/Dashboard.css";
 
 const Dashboard = ({ deseos, setDeseos }) => {
   const [role, setRole] = useState(null);
-  const [articulos, setArticulos] = useState([]); // Datos originales (raw_data)
+  const [articulos, setArticulos] = useState(null); // Datos originales (raw_data)
   const [recomendaciones, setRecomendaciones] = useState(null); // Datos transformados (transformed_data)
   const [busqueda, setBusqueda] = useState("");
   const [cargando, setCargando] = useState(false);
@@ -71,10 +71,10 @@ const Dashboard = ({ deseos, setDeseos }) => {
 
       {role === "user" && (
         <div className="dashboard-content">
-          {/* Recomendaciones ETL */}
-          <div className="recomendaciones">
-            <h2>Recomendaciones ETL</h2>
+          {/* Recomendaciones*/}
             {recomendaciones && (
+          <div className="recomendaciones">
+            <h2>Recomendaciones:</h2>
               <div className="recomendaciones-list">
                 {/* Producto con precio más bajo */}
                 <div className="articulo-recomendado">
@@ -142,14 +142,18 @@ const Dashboard = ({ deseos, setDeseos }) => {
                   </p>
                 </div>
               </div>
+              </div>
             )}
-          </div>
+          
 
           {/* Resultados de búsqueda */}
-          <div className="tabla-resultados">
+          {articulos && (
+            <div className="tabla-resultados">
             <h2>Resultados de búsqueda</h2>
             <Resultados articulos={articulos} agregarADeseos={agregarADeseos} />
           </div>
+          )}
+          
         </div>
       )}
     </div>

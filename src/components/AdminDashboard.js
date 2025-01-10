@@ -66,7 +66,7 @@ const AdminDashboard = () => {
   const handleLogout = () => {
     localStorage.removeItem("token"); // Elimina el token
     localStorage.removeItem("role"); // Opcional: Elimina también el rol
-    navigate("/"); // Redirige al login
+    window.location.href = "/"; // Redirige al login
   };
 
   return (
