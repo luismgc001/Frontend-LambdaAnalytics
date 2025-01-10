@@ -18,6 +18,18 @@ const Dashboard = ({ deseos, setDeseos }) => {
     setRole(userRole);
   }, []);
 
+  useEffect(() => {
+    const obtenerDeseos = async () => {
+      try {
+        const response = await api.get("/lista-deseos/");
+        setDeseos(response.data);
+      } catch (error) {
+        console.error("Error al obtener la lista de deseos:", error);
+      }
+    };
+    obtenerDeseos();
+  }, [setDeseos]);
+
   const obtenerArticulos = async () => {
     if (!busqueda.trim()) {
       alert("Por favor ingresa un término de búsqueda.");
@@ -33,7 +45,6 @@ const Dashboard = ({ deseos, setDeseos }) => {
       const data = response.data;
       setArticulos(data.raw_data); // Guarda los datos sin transformar
       setRecomendaciones(data.transformed_data); // Guarda los datos transformados
-      console.log("RECOMENDACIONES", data.transformed_data);
     } catch (error) {
       console.error(error);
       alert("Ocurrió un error al buscar los artículos.");
@@ -48,12 +59,25 @@ const Dashboard = ({ deseos, setDeseos }) => {
     }
   };
 
-  const agregarADeseos = (articulo) => {
-    const articuloConId = {
-      ...articulo,
-      id: Date.now(), // Genera un ID único basado en la fecha actual
-    };
-    setDeseos((prev) => [...prev, articuloConId]);
+  const agregarADeseos = async (articulo) => {
+    try {
+      const precioLimpio = articulo.precio.replace(/[^0-9.]/g, "");
+      const response = await api.post("/lista-deseos/", {
+        nombre: articulo.nombre,
+        imagen: articulo.imagen,
+        precio: precioLimpio,
+        url: articulo.enlace,
+      });
+      const nuevoArticulo = response.data;
+      const articuloConId = {
+        ...nuevoArticulo,
+        id: Date.now(), // Genera un ID único basado en la fecha actual
+      };
+      setDeseos((prev) => [...prev, articuloConId]);
+    } catch (error) {
+      console.error("Error al agregar a la lista de deseos:", error);
+      alert("Ocurrió un error al agregar el artículo a la lista de deseos.");
+    }
   };
 
   const handleLogout = () => {

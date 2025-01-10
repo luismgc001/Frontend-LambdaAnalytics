@@ -10,6 +10,7 @@ import Register from "./components/Register";
 import Dashboard from "./components/Dashboard";
 import AdminDashboard from "./components/AdminDashboard";
 import ListaDeseos from "./components/ListaDeseos";
+import api from "./api/api";
 import { jwtDecode } from "jwt-decode";
 
 const App = () => {
@@ -47,11 +48,14 @@ const App = () => {
     }
   }, []);
 
-  // Función para eliminar artículos de la lista de deseos
-  const eliminarDeDeseos = (id) => {
-    console.log("Antes de eliminar:", deseos);
-    setDeseos((prev) => prev.filter((articulo) => articulo.id !== id));
-    console.log("Después de eliminar:", deseos);
+  const eliminarDeDeseos = async (id) => {
+    try {
+      await api.delete(`/lista-deseos/${id}/`);
+      setDeseos((prev) => prev.filter((articulo) => articulo.id !== id));
+    } catch (error) {
+      console.error("Error al eliminar el artículo:", error);
+      alert("Ocurrió un error al eliminar el artículo de la lista de deseos.");
+    }
   };
 
   return (
@@ -121,6 +125,7 @@ const App = () => {
               <ListaDeseos
                 deseos={deseos}
                 eliminarDeDeseos={eliminarDeDeseos}
+                setDeseos={setDeseos}
               />
             ) : (
               <Navigate to="/" />

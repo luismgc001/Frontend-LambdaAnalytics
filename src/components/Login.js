@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import api from "../api/api";
 import "../styles/Login.css";
 
@@ -16,11 +16,11 @@ const Login = () => {
       const response = await api.post("login/", { email, password });
       console.log("Response from login:", response.data);
       const { access, role } = response.data;
-  
+
       // Almacena el token y el rol en localStorage
       localStorage.setItem("token", access);
       localStorage.setItem("role", role);
-  
+
       // Limpia errores y redirige basado en el rol
       setError("");
       if (role === "admin") {
@@ -47,7 +47,6 @@ const Login = () => {
       }
     }
   };
-  
 
   return (
     <div className="login-container">
