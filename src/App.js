@@ -10,6 +10,7 @@ import Register from "./components/Register";
 import Dashboard from "./components/Dashboard";
 import AdminDashboard from "./components/AdminDashboard";
 import ListaDeseos from "./components/ListaDeseos";
+import { jwtDecode } from "jwt-decode";
 
 const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -22,8 +23,27 @@ const App = () => {
     const userRole = localStorage.getItem("role");
 
     if (token) {
-      setIsAuthenticated(true);
-      setRole(userRole);
+      try {
+        const decodedToken = jwtDecode(token);
+        const currentTime = Math.floor(Date.now() / 1000); // Tiempo actual en segundos
+
+        if (decodedToken.exp > currentTime) {
+          setIsAuthenticated(true);
+          setRole(userRole);
+        } else {
+          // Si el token ha caducado, eliminarlo
+          localStorage.removeItem("token");
+          localStorage.removeItem("role");
+          setIsAuthenticated(false);
+          setRole(null);
+        }
+      } catch (error) {
+        console.error("Error al decodificar el token:", error);
+        localStorage.removeItem("token");
+        localStorage.removeItem("role");
+        setIsAuthenticated(false);
+        setRole(null);
+      }
     }
   }, []);
 

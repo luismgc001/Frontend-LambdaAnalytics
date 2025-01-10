@@ -7,7 +7,7 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -16,24 +16,38 @@ const Login = () => {
       const response = await api.post("login/", { email, password });
       console.log("Response from login:", response.data);
       const { access, role } = response.data;
-
+  
       // Almacena el token y el rol en localStorage
       localStorage.setItem("token", access);
       localStorage.setItem("role", role);
-
+  
       // Limpia errores y redirige basado en el rol
       setError("");
       if (role === "admin") {
-        console.log("ROL ADMIN")
+        console.log("ROL ADMIN");
         window.location.href = "/admin"; // Redirige a la página de administrador
       } else {
-        navigate("/dashboard", { replace: true }); // Redirige a la página de usuario normal
+        window.location.href = "/dashboard";
+        // navigate("/dashboard", { replace: true });Metodo no funciona correctamente
       }
     } catch (err) {
       // Maneja errores de login
-      setError("Usuario o contraseña incorrectos");
+      if (err.response && err.response.data && err.response.data.error) {
+        // Si el backend proporciona un mensaje de error, úsalo
+        setError(err.response.data.error);
+        setTimeout(() => {
+          setError("");
+        }, 2000);
+      } else {
+        // Mensaje genérico en caso de error inesperado
+        setError("Ocurrió un error al iniciar sesión. Intenta nuevamente.");
+        setTimeout(() => {
+          setError("");
+        }, 2000);
+      }
     }
   };
+  
 
   return (
     <div className="login-container">

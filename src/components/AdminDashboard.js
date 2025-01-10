@@ -13,13 +13,16 @@ const AdminDashboard = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    
     const fetchUsers = async () => {
+      
       try {
         const token = localStorage.getItem("token");
 
         if (!token) {
           console.log("No hay token");
-          navigate("/", { replace: true });
+          window.location.href = "/";
+          // navigate("/", { replace: true }); Metodo no funciona correctamente
           return;
         }
 
@@ -41,7 +44,8 @@ const AdminDashboard = () => {
         setUsers(usersResponse.data);
       } catch (err) {
         if (err.response && err.response.status === 401) {
-          navigate("/", { replace: true });
+          window.location.href = "/";
+          // navigate("/", { replace: true });Metodo no funciona correctamente
         } else {
           setError("No tienes permiso para ver esta información.");
         }
@@ -77,7 +81,8 @@ const AdminDashboard = () => {
   const handleLogout = () => {
     localStorage.removeItem("token"); // Elimina el token
     localStorage.removeItem("role"); // Opcional: Elimina también el rol
-    navigate("/"); // Redirige al login
+    window.location.href = "/";
+    // navigate("/");Metodo no funciona correctamente
   };
 
   return (
