@@ -2,7 +2,7 @@ import React from "react";
 import "../styles/Resultados.css";
 
 const Resultados = ({ articulos, agregarADeseos }) => {
-  const articulosLimitados = articulos?.slice(0, 25); // Limita a 25 resultados
+  const articulosLimitados = articulos?.slice(0, 30); // Limita a 30 resultados
 
   return (
     <div className="resultados">
